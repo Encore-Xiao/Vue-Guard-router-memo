@@ -1,0 +1,39 @@
+// 登录及设置token
+login(){
+  this.axios({
+      method: 'POST',
+      url: '...',
+      data: {
+          username:'',
+          password: ''
+      }
+  }).then((res) => {
+    let that = this;
+    localStorage.setItem('token',res.data.result.token) // token注入到vuex中
+  })
+}
+
+// 路由守卫配置
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token') // 获取账号的token鉴权
+  if(to.meta.requireAuth) { // 判断需要进入到哪个入口
+      if(token) { // 判断账号是否登录
+        next()
+      } else {
+        router.push({name: 'login'})
+      }
+  } else {
+    next()
+  }
+})
+
+// router.js
+{
+    path: '',
+    name: 'cart',
+    component: Cart,
+    meta: {
+      title: '购物车',
+      requireAuth: true
+    }
+},
